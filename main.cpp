@@ -9,7 +9,7 @@ void imagen(int arreglo_leds[]);
 void activacionSH();
 void activacionST();
 
-int arreglo_leds[8]={0};
+int arreglo_leds[64]={0};
   
 void setup()
 {
@@ -47,12 +47,12 @@ void verificacion(int arreglo_leds[]){
   while(!Serial.available());
   segundos = Serial.parseInt();
   for(int i=0;i<parpadeo;i++){
-    for(int i=0;i<8;i++){
+    for(int i=0;i<64;i++){
     digitalWrite(4, HIGH);
     activacionSH();
     }activacionST();
     delay(segundos*1000);
-    for(int i=0;i<8;i++){
+    for(int i=0;i<64;i++){
     digitalWrite(4, LOW);
     activacionSH();
     }activacionST();
@@ -62,13 +62,16 @@ void verificacion(int arreglo_leds[]){
 
 void imagen(int arreglo_leds[]){
   int estado=0;
-  for(int i=0;i<8;i++){
-  Serial.println("Ingrese 1 para encender led o 0 para apagar el led:");
+  int numero_led=1;
+  for(int i=0;i<64;i++){
+  Serial.print("Led numero:");Serial.print(numero_led);
+  Serial.println(", Ingrese 1 para encender led o 0 para apagar el led");
   while(!Serial.available());
   estado = Serial.parseInt();
   arreglo_leds[i]=estado;
+  numero_led+=1;
   }
-  for(int j=7;j>=0;j--){
+  for(int j=63;j>=0;j--){
     if(arreglo_leds[j]==1){
       digitalWrite(4, HIGH);
       activacionSH();
