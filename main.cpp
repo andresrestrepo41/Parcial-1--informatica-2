@@ -4,12 +4,15 @@
 //El pin 2 es el ST(Latch)
 
 
-void verificacion(int areglo_leds[]);
+void verificacion();
 void imagen(int arreglo_leds[]);
 void activacionSH();
 void activacionST();
+void patrones(int arreglo_leds[]);
+void patron1(int arreglo_leds[]);
+void patron2(int arreglo_leds[]);
+void ejecucion_leds(int arreglo_leds[]);
 
-int arreglo_leds[64]={0};
   
 void setup()
 {
@@ -21,8 +24,11 @@ void setup()
 
 void loop()
 {
- verificacion(arreglo_leds);
- imagen(arreglo_leds);
+  int arreglo_leds[64]={0};
+  ejecucion_leds(arreglo_leds);
+  verificacion();
+  imagen(arreglo_leds);
+  patrones(arreglo_leds);
   
 }
 
@@ -37,7 +43,7 @@ void activacionST(){
 }
 
 
-void verificacion(int arreglo_leds[]){
+void verificacion(){
   int parpadeo=0;
   int segundos=0;
   Serial.println("Ingrese cuantas veces quiere que la pantalla parpadee:");
@@ -71,6 +77,30 @@ void imagen(int arreglo_leds[]){
   arreglo_leds[i]=estado;
   numero_led+=1;
   }
+  ejecucion_leds(arreglo_leds);
+}
+
+void patrones(int arreglo_leds[]){
+    int opcion=0;
+    while(opcion!=5){
+      Serial.println("Ingrese del 1 al 4 para seleccionar el patron correspondiente, o 5 para salir:");
+      while(!Serial.available());
+      opcion=Serial.parseInt();
+        switch(opcion){
+          case 1:patron1(arreglo_leds);
+          break;
+          case 2:patron2(arreglo_leds);
+          break;
+          case 3:Serial.print("opcion3");
+          break;
+          case 4:Serial.print("opcion4");
+          break;
+          case 5:break;
+        }
+    }
+}
+
+void ejecucion_leds(int arreglo_leds[]){
   for(int j=63;j>=0;j--){
     if(arreglo_leds[j]==1){
       digitalWrite(4, HIGH);
@@ -80,5 +110,43 @@ void imagen(int arreglo_leds[]){
       activacionSH();
     }
   }
-  activacionST();  
+  activacionST(); 
 }
+
+void patron1(int arreglo_leds[]){
+    int matriz[8][8];
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (((j > 2-i && j < 5+i) && i<=4) || ((j > -5+i && j < 12-i) && i>=5)) {
+                matriz[i][j] = 1;
+            } else {
+                matriz[i][j] = 0;
+            }
+        }
+    }
+    int contador_arreglo=0;
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            arreglo_leds[contador_arreglo]=matriz[i][j];
+            contador_arreglo+=1;
+        }
+    }
+    ejecucion_leds(arreglo_leds);
+}
+
+void patron2(int arreglo_leds[]){
+    int matriz[8][8] = {0}; 
+    for (int i = 0; i < 8; ++i) {
+        matriz[i][i] = 1; 
+        matriz[i][8 - 1 - i] = 1; 
+    }
+    int contador_arreglo=0;
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            arreglo_leds[contador_arreglo]=matriz[i][j];
+            contador_arreglo+=1;
+        }
+    }
+    ejecucion_leds(arreglo_leds);
+}
+  
